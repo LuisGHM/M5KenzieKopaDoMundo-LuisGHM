@@ -9,7 +9,7 @@ from exceptions import NegativeTitlesError, InvalidYearCupError, ImpossibleTitle
 class teamsView(APIView):
     
     
-    def post(self, request: Request):
+    def post(self, request: Request) -> Response:
         data = request.data
         try:
             data_processing(data)
@@ -18,10 +18,16 @@ class teamsView(APIView):
             return Response({"error": "fifa_code alredy exits"}, status.HTTP_400_BAD_REQUEST) 
         except NegativeTitlesError:
             return Response({"error": "titles cannot be negative"}, status.HTTP_400_BAD_REQUEST)
-        except InvalidYearCupError as e:
+        except InvalidYearCupError:
             return Response({"error": "there was no world cup this year"}, status.HTTP_400_BAD_REQUEST)
-        except ImpossibleTitlesError as e:
+        except ImpossibleTitlesError:
            return Response({"error": "impossible to have more titles than disputed cups"}, status.HTTP_400_BAD_REQUEST)
     
         converted_team = model_to_dict(new_team)
         return Response(converted_team, status.HTTP_201_CREATED)
+    
+    
+    def get(self, request: Request) -> Response:
+        teams = Team.objects.all()
+        converted_teams = [model_to_dict(team) for team in teams]
+        return Response(converted_teams)

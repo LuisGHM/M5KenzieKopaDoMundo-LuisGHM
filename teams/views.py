@@ -31,3 +31,16 @@ class teamsView(APIView):
         teams = Team.objects.all()
         converted_teams = [model_to_dict(team) for team in teams]
         return Response(converted_teams)
+
+
+class teamsIdView(APIView):
+    
+    
+    
+    def get(sef, request: Request, team_id: int) -> Response:
+        try:
+            team = Team.objects.get(id=team_id)
+        except:
+            return Response({"error": "Team not found"}, status.HTTP_404_NOT_FOUND)
+        converted_team = model_to_dict(team)
+        return Response(converted_team)

@@ -58,3 +58,12 @@ class teamsIdView(APIView):
         
         converted_team = model_to_dict(team)
         return Response(converted_team)
+    
+    
+    def delete(self, request: Request, team_id: int) -> Response:
+        try:
+            team = Team.objects.get(id=team_id)
+        except:
+            return Response({"error": "Team not found"}, status.HTTP_404_NOT_FOUND)
+        team.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
